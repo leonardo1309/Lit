@@ -1,10 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:lit/Models/AppConstants.dart';
-import 'package:lit/Screens/devicePage.dart';
 import 'package:lit/Views/GridWidgets.dart';
-import 'package:lit/Views/TextWidgets.dart';
 
 class ZonePage extends StatefulWidget {
 

@@ -36,49 +36,53 @@ class _ZoneListTileState extends State<ZoneListTile> {
           ZoneListTile.Ind = index;
         return Opacity(
           opacity: 0.7,
-          child: AnimatedContainer(
-            duration: Duration(seconds: 2),
-            height: MediaQuery.of(context).size.width/2.8,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppConstants.darkShadeColor,
-                    offset: Offset(ZoneListTile.shadowData[0], ZoneListTile.shadowData[1]),
-                    blurRadius: ZoneListTile.shadowData[2],
-                    spreadRadius: ZoneListTile.shadowData[3],
-                  ),
-                  BoxShadow(
-                    color: Colors.white,//Color.fromRGBO(255, 255, 255, 0.7),
-                    offset: Offset(ZoneListTile.shadowData[4], ZoneListTile.shadowData[5]),
-                    blurRadius: ZoneListTile.shadowData[2],
-                    spreadRadius: ZoneListTile.shadowData[3],
-                  ),
-                ]),
+          child: Padding(
+            padding: const EdgeInsets.only(top:8.0,bottom: 8.0),
+            child: AnimatedContainer(
+              duration: Duration(seconds: 2),
+              height: MediaQuery.of(context).size.width/5.7,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppConstants.darkShadeColor,
+                      offset: Offset(ZoneListTile.shadowData[0], ZoneListTile.shadowData[1]),
+                      blurRadius: ZoneListTile.shadowData[2],
+                      spreadRadius: ZoneListTile.shadowData[3],
+                    ),
+                    BoxShadow(
+                      color: Colors.white,//Color.fromRGBO(255, 255, 255, 0.7),
+                      offset: Offset(ZoneListTile.shadowData[4], ZoneListTile.shadowData[5]),
+                      blurRadius: ZoneListTile.shadowData[2],
+                      spreadRadius: ZoneListTile.shadowData[3],
+                    ),
+                  ]),
 
-            child: OutlinedButton(
-              onPressed: () {ZoneListTile.shadowData = [6,2,4,2,-5,-2];
-              setState(() {});},
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(width: 1.8, color: Colors.white),
-                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
-                minimumSize: Size(MediaQuery.of(context).size.width/2.4,MediaQuery.of(context).size.width/2.8),
+              child: OutlinedButton(
+                onPressed: () {ZoneListTile.shadowData = [6,2,4,2,-5,-2];
+                setState(() {});},
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(width: 1.8, color: Colors.black45),
+                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+                  minimumSize: Size(MediaQuery.of(context).size.width/2.4,MediaQuery.of(context).size.width/2.8),
+                  backgroundColor: Colors.black54,
+                ),
+                child: ListTile(
+                leading: iconForButton(),
+                title: titleForButton(),
+                subtitle: Text(subForButton()),//Text('${ZoneListTile.numItems[index].toString()} Items'),
+                onTap: () => {
+
+                  if(ZoneListTile.zones.length == 1) {
+                    widget.function(1),
+                  } else{
+                    widget.function(index >= ZoneListTile.zones.length-1 ? 1 : 2),
+                  }
+                },
               ),
-              child: ListTile(
-              leading: iconForButton(),
-              title: titleForButton(),
-              subtitle: Text(subForButton()),//Text('${ZoneListTile.numItems[index].toString()} Items'),
-              onTap: () => {
-
-                if(ZoneListTile.zones.length == 1) {
-                  widget.function(1),
-                } else{
-                  widget.function(index >= ZoneListTile.zones.length-1 ? 1 : 2),
-                }
-              },
-            ),
-            ),
+              ),
         ),
+          ),
         );
       }
     );
@@ -122,6 +126,7 @@ bool OnOffs () {
 class FavButtons extends StatefulWidget {
 
   static List<String> favorites = <String>['+'];
+  static int Ind;
   final func;
 
   FavButtons({Key  key, this.func}) : super (key: key);
@@ -139,6 +144,7 @@ class _FavButtonsState extends State<FavButtons>{
         shrinkWrap: true,
         itemCount: FavButtons.favorites.length,
         itemBuilder: (context, index){
+          FavButtons.Ind = index;
       return Padding(
         padding: const EdgeInsets.only(top: 7, bottom: 7),
         child: Container(
@@ -165,10 +171,10 @@ class _FavButtonsState extends State<FavButtons>{
               if(FavButtons.favorites.length == 1) {
               widget.func(1),
             } else{
-              widget.func(index >= FavButtons.favorites.length-1 ? 1 : 2),
+              widget.func(index == 0 ? 1 : 2),
             }
             },
-            child: Text(FavButtons.favorites[0],style: TextStyle(
+            child: Text(favButtonText().data,style: TextStyle(
               fontSize: 25,
               color: Colors.grey,
             ),),
@@ -178,4 +184,15 @@ class _FavButtonsState extends State<FavButtons>{
     });
   }
 
+}
+Text favButtonText(){
+  if(FavButtons.favorites.length == 1){
+    return Text(FavButtons.favorites[FavButtons.Ind],textAlign: TextAlign.center, style: TextStyle(
+      fontSize: 50,
+      color: Colors.white,
+    ),);
+  }else if(FavButtons.Ind >= FavButtons.favorites.length-1){return Text(FavButtons.favorites[FavButtons.Ind],textAlign: TextAlign.center, style: TextStyle(
+    fontSize: 50,
+  ),);}
+  else return Text(FavButtons.favorites[FavButtons.Ind]);
 }
