@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lit/Models/AppConstants.dart';
@@ -26,6 +26,7 @@ class BasePage extends StatefulWidget {
 class _BasePageState extends State<BasePage> {
 
   int _selectedIndex = 0;
+  GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     Text(
@@ -65,7 +66,7 @@ class _BasePageState extends State<BasePage> {
         content: StatefulBuilder(
             builder: (context, setState){
               return Column(children: <Widget>[
-                  _widgetOptions.elementAt(_selectedIndex),
+                  //_widgetOptions.elementAt(_selectedIndex),
                   Text('Please enter name for the new zone',style: TextStyle(
                     color: Colors.white,
                   ),),
@@ -181,6 +182,7 @@ class _BasePageState extends State<BasePage> {
           ),),),
           TextButton(onPressed: (){setState(() {
             FavButtons.favorites.insert(FavButtons.favorites.length,toxtOditingCentraller.text);
+            FavButtons.areOn.insert(FavButtons.areOn.length, false);
           });
           Navigator.of(context).pop();
           toxtOditingCentraller.text = '';
@@ -194,7 +196,7 @@ class _BasePageState extends State<BasePage> {
       },
       );
     } else if (number == 2){
-      Navigator.pushNamed(context, ZonePage.routeName);
+
     }
   }
 
@@ -231,30 +233,22 @@ class _BasePageState extends State<BasePage> {
   @override
   Widget build(BuildContext context) {
 
-/*    Color getShadowColor(){
-      if(BasePage.isOn == true){
-        return Colors.yellow;
-      }else{
-        return Colors.white;
-      }
-    }
-*/
     return Scaffold(
       bottomNavigationBar: SizedBox(
-        height: deviceHeight=MediaQuery.of(context).size.height/4,
-        child: BottomNavigationBar(items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home_max_outlined, size: 40,), label: 'Home', ),
-
-          BottomNavigationBarItem(icon: Icon(Icons.devices_other_outlined,size: 40,), label: 'All devices', ),
-
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline_outlined,size: 40,), label: 'Config & Scenes', ),
+        height: deviceHeight=MediaQuery.of(context).size.height/9,
+        child: CurvedNavigationBar(key: _bottomNavigationKey, index: 0, height: 65, items: <Widget>[
+          Icon(Icons.home_outlined, size: 40, color: Colors.white,),
+          Icon(Icons.devices_other_outlined,size: 40,color: Colors.white,),
+        Icon(Icons.add_circle_outline_outlined,size: 40,color: Colors.white,),
         ],
-          currentIndex: _selectedIndex,
-          showSelectedLabels: false,
-          backgroundColor: AppConstants.appColor,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.green,
+          color: AppConstants.appColor,
+
+          backgroundColor: Colors.black12,
+          buttonBackgroundColor: Color.fromRGBO(213, 237, 220, 70),
+          animationCurve: Curves.easeInOut,
+          animationDuration: Duration(milliseconds: 600),
           onTap: _onItemTapped,
+          letIndexChange: (index) => true,
         ),
       ),
 
@@ -290,7 +284,7 @@ class _BasePageState extends State<BasePage> {
                           scrollDirection: Axis.horizontal,
                           physics: NeverScrollableScrollPhysics(),
                           children: [
-                             FavButtons(func: showDialogueFav,),
+                             FavButtons(func: showDialogueFav, isOn: BasePage.isOn,),
                           ],
                         ),
                       ),
@@ -333,7 +327,4 @@ class _BasePageState extends State<BasePage> {
     }
   }
 
-void onOff () {
-  BasePage.isOn = !BasePage.isOn;
-}
 

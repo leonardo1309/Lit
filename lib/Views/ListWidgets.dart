@@ -13,6 +13,7 @@ class ZoneListTile extends StatefulWidget {
   static List<double> shadowData = <double>[0,0,0,0,0,0];
   static Icon iconX;
   static String subTitl;
+  static bool isOn = false;
   static List<String> zones = <String>['+'];
   static List<int> numItems = <int>[2];
   ZoneListTile({Key key, this.function}) : super(key:key);
@@ -62,7 +63,7 @@ class _ZoneListTileState extends State<ZoneListTile> {
                 onPressed: () {ZoneListTile.shadowData = [6,2,4,2,-5,-2];
                 setState(() {});},
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(width: 1.8, color: Colors.black45),
+                  side: BorderSide(width: 1.8, color: AppConstants.appSecondaryColor),
                   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
                   minimumSize: Size(MediaQuery.of(context).size.width/2.4,MediaQuery.of(context).size.width/2.8),
                   backgroundColor: Colors.black54,
@@ -70,7 +71,7 @@ class _ZoneListTileState extends State<ZoneListTile> {
                 child: ListTile(
                 leading: iconForButton(),
                 title: titleForButton(),
-                subtitle: Text(subForButton()),//Text('${ZoneListTile.numItems[index].toString()} Items'),
+                subtitle: Text(subForButton(),style: TextStyle(color: Colors.white),),//Text('${ZoneListTile.numItems[index].toString()} Items'),
                 onTap: () => {
 
                   if(ZoneListTile.zones.length == 1) {
@@ -115,21 +116,15 @@ Text titleForButton(){
   else return Text(ZoneListTile.zones[ZoneListTile.Ind]);
 }
 
-
-
-
-bool OnOffs () {
-  BasePage.isOn = !BasePage.isOn;
-}
-
-
 class FavButtons extends StatefulWidget {
 
   static List<String> favorites = <String>['+'];
+  static List<bool> areOn = <bool>[false];
   static int Ind;
-  final func;
+  Function func;
+  bool isOn = false;
 
-  FavButtons({Key  key, this.func}) : super (key: key);
+  FavButtons({Key  key,this.func, this.isOn }) : super (key: key);
 
   @override
   _FavButtonsState createState() => _FavButtonsState();
@@ -138,6 +133,16 @@ class FavButtons extends StatefulWidget {
 class _FavButtonsState extends State<FavButtons>{
   @override
   Widget build(BuildContext context) {
+
+    Color getShadowColor(){
+      if(FavButtons.areOn[FavButtons.Ind] == true){
+        return AppConstants.appSecondaryColor;
+      }else{
+        return Colors.transparent;
+      }
+    }
+
+
     return ListView.builder(
         physics: NeverScrollableScrollPhysics(),
         scrollDirection: Axis.horizontal,
@@ -152,15 +157,22 @@ class _FavButtonsState extends State<FavButtons>{
           decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: AppConstants.appColor,
+              border: Border.all(color: AppConstants.appSecondaryColor,width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: AppConstants.darkShadeColor,
-                  offset: Offset(6, 2),
+                  color: Color.fromRGBO(105, 105, 106, 1),//getShadowColor(),
+                  offset: Offset(3, 2),
                   blurRadius: 4.0,
                   spreadRadius: 2.0,
                 ),
                 BoxShadow(
-                  color: Colors.white,//getShadowColor(),
+                  color: getShadowColor(),//getShadowColor(),
+                  offset: Offset(2, 2),
+                  blurRadius: 4.0,
+                  spreadRadius: 2.0,
+                ),
+                BoxShadow(
+                  color: Color.fromRGBO(64, 64, 63, 1),//getShadowColor(),
                   offset: Offset(-5, -2),
                   blurRadius: 4.0,
                   spreadRadius: 2.0,
@@ -170,8 +182,13 @@ class _FavButtonsState extends State<FavButtons>{
             onPressed: () => {
               if(FavButtons.favorites.length == 1) {
               widget.func(1),
+
             } else{
               widget.func(index == 0 ? 1 : 2),
+                if(index>0){
+          setState(() {
+            FavButtons.areOn[index] = !FavButtons.areOn[index];
+          }),},
             }
             },
             child: Text(favButtonText().data,style: TextStyle(
