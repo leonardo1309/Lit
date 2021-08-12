@@ -1,21 +1,24 @@
 
-import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lit/Models/AppConstants.dart';
 import 'package:lit/Screens/basePage.dart';
-import 'package:lit/Screens/zonePage.dart';
+import 'package:lit/Screens/devicePage.dart';
+
 
 class ZoneListTile extends StatefulWidget {
 
   final function;
   static int Ind;
   static List<double> shadowData = <double>[0,0,0,0,0,0];
+  static List<Icon> zoneIcons = [Icon(Icons.home),Icon(Icons.home),Icon(Icons.home),Icon(Icons.home),Icon(Icons.home)];
   static Icon iconX;
   static String subTitl;
   static bool isOn = false;
   static List<String> zones = <String>['+'];
   static List<int> numItems = <int>[2];
+
+
   ZoneListTile({Key key, this.function}) : super(key:key);
 
   @override
@@ -23,8 +26,6 @@ class ZoneListTile extends StatefulWidget {
 }
 
 class _ZoneListTileState extends State<ZoneListTile> {
-
-  //static List<Icon> Iconos = <Icon>[Icon(Icons.airline_seat_individual_suite),Icon(Icons.ac_unit),Icon(Icons.attractions),Icon(Icons.checkroom_outlined),Icon(Icons.child_friendly_outlined),Icon(Icons.clean_hands_outlined),Icon(Icons.cleaning_services_outlined),Icon(Icons.deck_outlined),Icon(Icons.emoji_objects_outlined)];
 
 
   @override
@@ -94,7 +95,7 @@ Icon iconForButton(){
   if(ZoneListTile.zones.length == 1){
     return null;
   }else if(ZoneListTile.Ind >= ZoneListTile.zones.length-1){return null;}
-  else return Icon(Icons.home_outlined);
+  else return ZoneListTile.zoneIcons[ZoneListTile.Ind];
 }
 
 String subForButton(){
@@ -116,11 +117,25 @@ Text titleForButton(){
   else return Text(ZoneListTile.zones[ZoneListTile.Ind]);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 class FavButtons extends StatefulWidget {
 
   static List<String> favorites = <String>['+'];
   static List<bool> areOn = <bool>[false];
+  static List<Icon> favIcons = [Icon(Icons.add,color: Colors.white,),];
   static int Ind;
+  static Icon passer;
   Function func;
   bool isOn = false;
 
@@ -135,8 +150,9 @@ class _FavButtonsState extends State<FavButtons>{
   Widget build(BuildContext context) {
 
     Color getShadowColor(){
-      if(FavButtons.areOn[FavButtons.Ind] == true){
-        return AppConstants.appSecondaryColor;
+      if(FavButtons.Ind == 1){return Colors.transparent;}
+      else if(FavButtons.areOn[FavButtons.Ind] == true){
+        return AppConstants.favColor;
       }else{
         return Colors.transparent;
       }
@@ -151,51 +167,63 @@ class _FavButtonsState extends State<FavButtons>{
         itemBuilder: (context, index){
           FavButtons.Ind = index;
       return Padding(
-        padding: const EdgeInsets.only(top: 7, bottom: 7),
-        child: Container(
-          width: MediaQuery.of(context).size.width/5,
-          decoration: BoxDecoration(
+        padding: const EdgeInsets.fromLTRB(3,7,10,7),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedPhysicalModel(
+              duration: Duration(milliseconds: 500),
               shape: BoxShape.circle,
               color: AppConstants.appColor,
-              border: Border.all(color: AppConstants.appSecondaryColor,width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: Color.fromRGBO(105, 105, 106, 1),//getShadowColor(),
-                  offset: Offset(3, 2),
-                  blurRadius: 4.0,
-                  spreadRadius: 2.0,
-                ),
-                BoxShadow(
-                  color: getShadowColor(),//getShadowColor(),
-                  offset: Offset(2, 2),
-                  blurRadius: 4.0,
-                  spreadRadius: 2.0,
-                ),
-                BoxShadow(
-                  color: Color.fromRGBO(64, 64, 63, 1),//getShadowColor(),
-                  offset: Offset(-5, -2),
-                  blurRadius: 4.0,
-                  spreadRadius: 2.0,
-                ),
-              ]),
-          child: MaterialButton(
-            onPressed: () => {
-              if(FavButtons.favorites.length == 1) {
-              widget.func(1),
+              elevation:  FavButtons.areOn[FavButtons.Ind] ? 8 : 0,
+              shadowColor: AppConstants.appSecondaryColor,
+              curve: Curves.easeInQuad,
+              animateColor: false,
+              clipBehavior: Clip.antiAlias,
+              child: Container(
+                alignment: Alignment.center,
+                width: MediaQuery.of(context).size.width/8,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: getShadowColor(),
+                    border: Border.all(color: AppConstants.appSecondaryColor,width: 2),
+                    ),
 
-            } else{
-              widget.func(index == 0 ? 1 : 2),
-                if(index>0){
-          setState(() {
-            FavButtons.areOn[index] = !FavButtons.areOn[index];
-          }),},
-            }
-            },
-            child: Text(favButtonText().data,style: TextStyle(
-              fontSize: 25,
-              color: Colors.grey,
-            ),),
-          ),
+                child: Theme(
+                  data: ThemeData(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  ),
+                  child: MaterialButton(
+                    padding: EdgeInsets.all(0),
+                    minWidth: 0,
+                    onPressed: () => {
+                      if(FavButtons.favorites.length == 1) {
+                      widget.func(1), // Abrir Ventana de creacion de nuevo dispositivo
+                    } else if(index == 0){
+                    widget.func(1),
+                    } else {
+                        FavButtons.Ind = index,
+                        FavButtons.areOn[index] = !FavButtons.areOn[index],
+                        FavButtons.favIcons[index] = Icon(BasePage.icons[index],color: FavButtons.areOn[index] ? AppConstants.appSecondaryColor : Colors.white,),
+                        widget.func(2),
+                      }
+                    },
+                    onLongPress: () => {Navigator.pushNamed(context, DevicePage.routeName,),},
+                    child: FavButtons.favIcons[FavButtons.Ind],
+                  ),
+                ),
+              ),
+            ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: Text(FavButtons.Ind != 0 ? favButtonText().data : '',style: TextStyle(
+                fontSize: 10,
+                color: FavButtons.areOn[FavButtons.Ind] ? AppConstants.appSecondaryColor : Colors.white,
+                  //fontWeight: FontWeight.bold,
+                ),),
+              ),
+          ],
         ),
       );
     });
@@ -204,12 +232,19 @@ class _FavButtonsState extends State<FavButtons>{
 }
 Text favButtonText(){
   if(FavButtons.favorites.length == 1){
-    return Text(FavButtons.favorites[FavButtons.Ind],textAlign: TextAlign.center, style: TextStyle(
+    return Text(FavButtons.favorites[FavButtons.Ind],
+      textAlign: TextAlign.center,
+      style: TextStyle(
       fontSize: 50,
       color: Colors.white,
     ),);
-  }else if(FavButtons.Ind >= FavButtons.favorites.length-1){return Text(FavButtons.favorites[FavButtons.Ind],textAlign: TextAlign.center, style: TextStyle(
+  }else if(FavButtons.Ind >= FavButtons.favorites.length-1){
+    return Text(FavButtons.favorites[FavButtons.Ind],
+    textAlign: TextAlign.center,
+    style: TextStyle(
     fontSize: 50,
-  ),);}
+    ),
+    );
+  }
   else return Text(FavButtons.favorites[FavButtons.Ind]);
 }

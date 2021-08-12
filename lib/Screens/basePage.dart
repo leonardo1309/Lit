@@ -2,9 +2,11 @@ import 'dart:math';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:lit/Models/AppConstants.dart';
 import 'package:lit/Screens/zonePage.dart';
 import 'package:lit/Views/ListWidgets.dart';
+
 
 TextEditingController textEditingController = TextEditingController();
 TextEditingController toxtOditingCentraller = TextEditingController();
@@ -12,9 +14,14 @@ TextEditingController toxtOditingCentraller = TextEditingController();
 class BasePage extends StatefulWidget {
   static final String routeName = '/BasePageRoute';
   static bool isOn = false;
+  static Icon selectedIcon = Icon(Icons.arrow_drop_down);
+  static bool selected = false;
+  static List <IconData> icons = [IconData(0),];
+  static IconData _iconData;
   static Alignment childAlignment = Alignment.center;
   final addItems;
   static var ran = new Random();
+
 
 
   BasePage({Key key, this.addItems}) : super(key: key);
@@ -25,7 +32,8 @@ class BasePage extends StatefulWidget {
 
 class _BasePageState extends State<BasePage> {
 
-  int _selectedIndex = 0;
+  int _index = 0;
+
   GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
@@ -45,7 +53,7 @@ class _BasePageState extends State<BasePage> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _index = index;
     });
   }
 
@@ -94,7 +102,12 @@ class _BasePageState extends State<BasePage> {
                       color: Colors.white,
                     ),),
                   ),
-                  IconButton(icon: Icon(Icons.arrow_drop_down_circle_outlined), onPressed: ()=>{},color: Colors.white,iconSize: 60,)
+                  IconButton(icon: Icon(Icons.arrow_drop_down), onPressed: ()=>{
+                    _openIconPicker()
+                  },
+                    color: Colors.white,
+                    iconSize: 60,
+                  )
                 ],
 
               );
@@ -128,10 +141,13 @@ class _BasePageState extends State<BasePage> {
 
   void showDialogueFav(number) {
     if(number == 1) {
+      BasePage.selectedIcon = Icon(Icons.arrow_drop_down);
       showDialog(context: context, builder: (BuildContext context){return AnimatedContainer(
-        curve:Curves.easeOut, duration: Duration(milliseconds: 400),height:200, alignment: BasePage.childAlignment ,child: AlertDialog(
+        curve:Curves.easeOut, duration: Duration(milliseconds: 400),height:200, alignment: BasePage.childAlignment ,
+
+        child: AlertDialog(
         scrollable: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppConstants.any,
 
 
         title: Text('Configure favorite device',style: TextStyle(
@@ -170,7 +186,15 @@ class _BasePageState extends State<BasePage> {
                     color: Colors.white,
                   ),),
                 ),
-                IconButton(icon: Icon(Icons.arrow_drop_down_circle_outlined), onPressed: ()=>{},color: Colors.white,iconSize: 60,)
+                IconButton(icon: BasePage.selected ? BasePage.selectedIcon : Icon(Icons.arrow_drop_down), onPressed: ()=>{
+                    _pickFavIcon(),
+                  if(BasePage.selected != false){
+                    setState(() {
+                      _showToast(context);
+                    }),
+              },
+                  BasePage.selected == false,
+                },color: Colors.white,iconSize: 60,)
               ],);
             }
         ),
@@ -183,6 +207,9 @@ class _BasePageState extends State<BasePage> {
           TextButton(onPressed: (){setState(() {
             FavButtons.favorites.insert(FavButtons.favorites.length,toxtOditingCentraller.text);
             FavButtons.areOn.insert(FavButtons.areOn.length, false);
+            FavButtons.favIcons.insert(FavButtons.favIcons.length, BasePage.selectedIcon,);
+            BasePage.icons.insert(BasePage.icons.length, BasePage._iconData);
+
           });
           Navigator.of(context).pop();
           toxtOditingCentraller.text = '';
@@ -196,10 +223,42 @@ class _BasePageState extends State<BasePage> {
       },
       );
     } else if (number == 2){
-
+      setState(() {
+      });
     }
   }
+  
 
+
+  void _openIconPicker() async {
+      IconData icon = await FlutterIconPicker.showIconPicker(context, iconPackMode: IconPack.material,);
+      if(icon != null){
+        setState((){
+          ZoneListTile.zoneIcons[_index] = Icon(icon,size: 30);
+        });
+    }
+      _index++;
+  }
+  void _pickFavIcon() async {
+    IconData icon = await FlutterIconPicker.showIconPicker(context, iconPackMode: IconPack.material,);
+    if(icon != null){
+      BasePage.selectedIcon = Icon(icon,size: 25,color: Colors.white);
+      BasePage.selected = true;
+      BasePage._iconData = icon;
+    }
+    _index++;
+  }
+
+  void _showToast (BuildContext context) {
+    final String er = BasePage.selected ? 'true' : 'false';
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: Text('prueba'),
+        action: SnackBarAction(label: 'Ocultar', onPressed: scaffold.hideCurrentSnackBar),
+      ),
+    );
+  }
 
   FocusNode focusnode;
   String hintext = '';
@@ -256,6 +315,7 @@ class _BasePageState extends State<BasePage> {
       drawer: Drawer(),
       body: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
@@ -268,16 +328,13 @@ class _BasePageState extends State<BasePage> {
               ),),
             ),
             Container(
-              decoration: BoxDecoration(
-                //color: AppConstants.appColor,
-              ),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                padding: const EdgeInsets.fromLTRB(15, 20, 0, 10),
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width*0.9,
-                  height: 70,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height/9,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Expanded(
                         child: ListView(
@@ -296,7 +353,7 @@ class _BasePageState extends State<BasePage> {
 
 
             Padding(
-              padding: const EdgeInsets.only(top: 20, left: 20),
+              padding: const EdgeInsets.only( left: 20),
               child: Text('Todas las zonas',
                 style: TextStyle(
                   color: Colors.white,

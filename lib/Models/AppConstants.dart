@@ -11,4 +11,7 @@ class AppConstants {
   static final Color appBarLightShadeColor = Color.fromRGBO(51, 72, 81, 1);
   static final Color onColor = Color.fromRGBO(244, 250, 160, 1);
   static final Color taupe = Color.fromRGBO(195, 182, 171, 1);
+  static final Color favColor = Color.fromRGBO(71, 71, 71, 0.0);
+  static final Color any = Color.fromRGBO(80 , 110, 80, 70);
+
 }

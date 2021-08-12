@@ -131,7 +131,7 @@ class _DevManagerGridTileState extends State<DevManagerGridTile> {
             child: MaterialButton(
               onPressed: () => {setState((){OnOff();})},
               onLongPress: () => {Navigator.pushNamed(context, DevicePage.routeName,),},
-            ),
+  ),
           ),
           Text('Mueble Tv', style: TextStyle(
             fontSize: 16,
