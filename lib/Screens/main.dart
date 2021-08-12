@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:lit/Models/AppConstants.dart';
+import 'package:lit/Screens/allDevicesPage.dart';
 import 'package:lit/Screens/devicePage.dart';
+import 'package:lit/Screens/mainDashboard.dart';
 import 'package:lit/Screens/zonePage.dart';
 
+import 'addPage.dart';
 import 'basePage.dart';
 
 void main() => runApp(MyApp());
@@ -20,7 +23,10 @@ class MyApp extends StatelessWidget {
       ),
       home: MyHomePage(),
       routes: {
+        MainDashboard.routeName: (context) => MainDashboard(),
         BasePage.routeName: (context) => BasePage(),
+        AllDevicesPage.routeName: (context) => AllDevicesPage(),
+        AddPage.routeName: (context) => AddPage(),
         ZonePage.routeName: (context) => ZonePage(),
         DevicePage.routeName: (context) => DevicePage(),
       },
@@ -41,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     Timer(Duration(seconds: 2), (){
-      Navigator.pushNamed(context, BasePage.routeName);
+      Navigator.pushNamed(context, MainDashboard.routeName);
     });
     super.initState();
   }

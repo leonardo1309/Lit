@@ -34,7 +34,6 @@ class _BasePageState extends State<BasePage> {
 
   int _index = 0;
 
-  GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     Text(
@@ -51,11 +50,6 @@ class _BasePageState extends State<BasePage> {
     ),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _index = index;
-    });
-  }
 
   void showDialogue(number) {
     if(number == 1) {
@@ -103,7 +97,7 @@ class _BasePageState extends State<BasePage> {
                     ),),
                   ),
                   IconButton(icon: Icon(Icons.arrow_drop_down), onPressed: ()=>{
-                    _openIconPicker()
+                    _pickZoneIcon()
                   },
                     color: Colors.white,
                     iconSize: 60,
@@ -230,7 +224,7 @@ class _BasePageState extends State<BasePage> {
   
 
 
-  void _openIconPicker() async {
+  void _pickZoneIcon() async {
       IconData icon = await FlutterIconPicker.showIconPicker(context, iconPackMode: IconPack.material,);
       if(icon != null){
         setState((){
@@ -265,7 +259,6 @@ class _BasePageState extends State<BasePage> {
   bool showSBar = false;
   Icon barIcon = Icon(Icons.search);
   Widget sBar = Text('');
-  double deviceHeight = 0;
 
 
 
@@ -285,35 +278,16 @@ class _BasePageState extends State<BasePage> {
   @override
   void dispose() {
     focusnode.dispose();
-    textEditingController.dispose();
-    toxtOditingCentraller.dispose();
+    //textEditingController.dispose();
+    //toxtOditingCentraller.dispose();
     super.dispose();
   }
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      bottomNavigationBar: SizedBox(
-        height: deviceHeight=MediaQuery.of(context).size.height/9,
-        child: CurvedNavigationBar(key: _bottomNavigationKey, index: 0, height: 65, items: <Widget>[
-          Icon(Icons.home_outlined, size: 40, color: Colors.white,),
-          Icon(Icons.devices_other_outlined,size: 40,color: Colors.white,),
-        Icon(Icons.add_circle_outline_outlined,size: 40,color: Colors.white,),
-        ],
-          color: AppConstants.appColor,
-
-          backgroundColor: Colors.black12,
-          buttonBackgroundColor: Color.fromRGBO(213, 237, 220, 70),
-          animationCurve: Curves.easeInOut,
-          animationDuration: Duration(milliseconds: 600),
-          onTap: _onItemTapped,
-          letIndexChange: (index) => true,
-        ),
-      ),
-
-      backgroundColor: AppConstants.appColor,
-      drawer: Drawer(),
-      body: SingleChildScrollView(
+    return Padding(
+      padding: const EdgeInsets.all(0),
+      child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
