@@ -7,15 +7,16 @@ import 'package:lit/Models/AppConstants.dart';
 import 'package:lit/Screens/basePage.dart';
 import 'package:lit/Screens/devicePage.dart';
 import 'package:lit/Screens/zonePage.dart';
+import 'package:lit/Views/ListWidgets.dart';
 
-class DeviceGridTile extends StatefulWidget {
-  DeviceGridTile({Key  key}) : super (key: key);
+class DeviceGrid extends StatefulWidget {
+  DeviceGrid({Key  key}) : super (key: key);
 
   @override
-  _DeviceGridTileState createState() => _DeviceGridTileState ();
+  _DeviceGridState createState() => _DeviceGridState ();
 }
 
-class _DeviceGridTileState extends State<DeviceGridTile> {
+class _DeviceGridState extends State<DeviceGrid> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -109,34 +110,8 @@ class _DevManagerGridTileState extends State<DevManagerGridTile> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
-            height: MediaQuery.of(context).size.height/11,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppConstants.appColor,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppConstants.darkShadeColor,
-                    offset: Offset(6, 2),
-                    blurRadius: 4.0,
-                    spreadRadius: 2.0,
-                  ),
-                  BoxShadow(
-                    color: getShadowColor(),//Color.fromRGBO(255, 255, 255, 0.7),
-                    offset: Offset(-5, -2),
-                    blurRadius: 4.0,
-                    spreadRadius: 2.0,
-                  ),
-                ]),
-            child: MaterialButton(
-              onPressed: () => {setState((){OnOff();})},
-              onLongPress: () => {Navigator.pushNamed(context, DevicePage.routeName,),},
-  ),
-          ),
-          Text('Mueble Tv', style: TextStyle(
-            fontSize: 16,
-            color: Colors.white,
-          ),),
+          //FavoriteButton(),
+          Text('hola'),
     ],
     );
   }

@@ -6,16 +6,18 @@ import 'package:lit/Screens/allDevicesPage.dart';
 import 'package:lit/Screens/devicePage.dart';
 import 'package:lit/Screens/mainDashboard.dart';
 import 'package:lit/Screens/zonePage.dart';
-
+import 'package:lit/Models/Device.dart';
 import 'addPage.dart';
 import 'basePage.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    Device device;
     return MaterialApp(
       title: 'Lit',
       theme: ThemeData(
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
         AllDevicesPage.routeName: (context) => AllDevicesPage(),
         AddPage.routeName: (context) => AddPage(),
         ZonePage.routeName: (context) => ZonePage(),
-        DevicePage.routeName: (context) => DevicePage(),
+        DevicePage.routeName: (context) => DevicePage(device),
       },
       debugShowCheckedModeBanner: false,
     );

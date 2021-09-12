@@ -1,10 +1,12 @@
 import 'dart:math';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:lit/Models/AppConstants.dart';
-import 'package:lit/Screens/zonePage.dart';
+import 'package:lit/Models/Device.dart';
+import 'package:lit/Models/Zone.dart';
+import 'package:lit/Models/data.dart';
+import 'package:lit/Views/DeviceButton.dart';
 import 'package:lit/Views/ListWidgets.dart';
 
 
@@ -12,19 +14,15 @@ TextEditingController textEditingController = TextEditingController();
 TextEditingController toxtOditingCentraller = TextEditingController();
 
 class BasePage extends StatefulWidget {
+
   static final String routeName = '/BasePageRoute';
-  static bool isOn = false;
-  static Icon selectedIcon = Icon(Icons.arrow_drop_down);
-  static bool selected = false;
-  static List <IconData> icons = [IconData(0),];
-  static IconData _iconData;
-  static Alignment childAlignment = Alignment.center;
-  final addItems;
   static var ran = new Random();
+  static Icon baseIcon = Icon(Icons.wb_twighlight);
 
 
 
-  BasePage({Key key, this.addItems}) : super(key: key);
+
+  BasePage({Key key}) : super(key: key);
 
   @override
   _BasePageState createState() => _BasePageState();
@@ -32,34 +30,20 @@ class BasePage extends StatefulWidget {
 
 class _BasePageState extends State<BasePage> {
 
-  int _index = 0;
+  var idGenerator = new Random();
+  Zona _zone;
 
-  static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-  ];
+  void addZoneFunction() {
 
-
-  void showDialogue(number) {
-    if(number == 1) {
       showDialog(context: context, builder: (BuildContext context){return AnimatedContainer(
-          curve:Curves.easeOut, duration: Duration(milliseconds: 400),height:200, alignment: BasePage.childAlignment ,child: AlertDialog(
+          curve:Curves.easeOut, duration: Duration(milliseconds: 400),height:200, alignment: Alignment.center ,
+
+        child: AlertDialog(
         scrollable: true,
         backgroundColor: Colors.transparent,
 
 
-        title: Text('Configure new zone',style: TextStyle(
+        title: Text('Configurar nueva zona',style: TextStyle(
           color: Colors.white,
         ),),
 
@@ -69,7 +53,7 @@ class _BasePageState extends State<BasePage> {
             builder: (context, setState){
               return Column(children: <Widget>[
                   //_widgetOptions.elementAt(_selectedIndex),
-                  Text('Please enter name for the new zone',style: TextStyle(
+                  Text('Inserte el nombre para la zona',style: TextStyle(
                     color: Colors.white,
                   ),),
                   Padding(
@@ -82,7 +66,7 @@ class _BasePageState extends State<BasePage> {
                       ),decoration: InputDecoration(
                       enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
                       focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.teal)),
-                      hintText: 'Zone name',
+                      hintText: 'Nombre',
                       hintStyle: TextStyle(
                         color: Colors.white,
                       ),
@@ -92,12 +76,12 @@ class _BasePageState extends State<BasePage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0,10,0,15),
-                    child: Text('Please select icon for the new zone',style: TextStyle(
+                    child: Text('Seleccione el icono para la zona',style: TextStyle(
                       color: Colors.white,
                     ),),
                   ),
                   IconButton(icon: Icon(Icons.arrow_drop_down), onPressed: ()=>{
-                    _pickZoneIcon()
+                    _pickZoneIcon(),
                   },
                     color: Colors.white,
                     iconSize: 60,
@@ -114,8 +98,19 @@ class _BasePageState extends State<BasePage> {
             color: Colors.white, fontSize: 22,
           ),),),
           TextButton(onPressed: (){setState(() {
-            ZoneListTile.zones.insert(ZoneListTile.zones.length-1,textEditingController.text);
-            ZoneListTile.numItems.insert(ZoneListTile.zones.length-1, BasePage.ran.nextInt(6));
+
+            _zone = Zona();
+            _zone.name = textEditingController.text;
+            _zone.icon = BasePage.baseIcon;
+
+            //ZoneListTile.zones.insert(ZoneListTile.zones.length-1,_zone.name);
+            //ZoneListTile.numItems.insert(ZoneListTile.zones.length-1, BasePage.ran.nextInt(6));
+
+            _zone.numDevices = 3;
+
+            InventedData.listOfZones.add(_zone);
+            print('Zones length ${InventedData.listOfZones.length.toString()}');
+
           });
           Navigator.of(context).pop();
           textEditingController.text = '';
@@ -128,142 +123,106 @@ class _BasePageState extends State<BasePage> {
       );
       },
       );
-    } else if (number == 2){
-      Navigator.pushNamed(context, ZonePage.routeName);
-    }
   }
 
-  void showDialogueFav(number) {
-    if(number == 1) {
-      BasePage.selectedIcon = Icon(Icons.arrow_drop_down);
-      showDialog(context: context, builder: (BuildContext context){return AnimatedContainer(
-        curve:Curves.easeOut, duration: Duration(milliseconds: 400),height:200, alignment: BasePage.childAlignment ,
+  void addFavoriteFunction() {
+    Device _selectedDevice;
 
-        child: AlertDialog(
-        scrollable: true,
-        backgroundColor: AppConstants.any,
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("Si buenas"),
+    ));
 
+    print('la putaaa');
 
-        title: Text('Configure favorite device',style: TextStyle(
-          color: Colors.white,
-        ),),
+    showDialog(context: context, builder: (BuildContext context){return AnimatedContainer(
+    curve:Curves.easeOut, duration: Duration(milliseconds: 400),height:200, alignment: Alignment.center,
 
-
-
-        content: StatefulBuilder(
-            builder: (context, setState){
-              return Column(children: <Widget>[
-                Text('Please enter name of the device',style: TextStyle(
-                  color: Colors.white,
-                ),),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0,25,0,25),
-                  child: TextFormField(
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),decoration: InputDecoration(
-                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                    focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.teal)),
-                    hintText: 'Device name',
-                    hintStyle: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                    controller: toxtOditingCentraller,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0,10,0,15),
-                  child: Text('Please select icon for the device',style: TextStyle(
-                    color: Colors.white,
-                  ),),
-                ),
-                IconButton(icon: BasePage.selected ? BasePage.selectedIcon : Icon(Icons.arrow_drop_down), onPressed: ()=>{
-                    _pickFavIcon(),
-                  if(BasePage.selected != false){
-                    setState(() {
-                      _showToast(context);
-                    }),
-              },
-                  BasePage.selected == false,
-                },color: Colors.white,iconSize: 60,)
-              ],);
-            }
-        ),
+    child: AlertDialog(
+    scrollable: true,
+    backgroundColor: AppConstants.any,
 
 
-        actions: [
-          TextButton(onPressed: (){Navigator.of(context).pop();toxtOditingCentraller.text = '';}, child: Text('Cancel', textAlign:TextAlign.left, style: TextStyle(
-            color: Colors.white, fontSize: 22,
-          ),),),
-          TextButton(onPressed: (){setState(() {
-            FavButtons.favorites.insert(FavButtons.favorites.length,toxtOditingCentraller.text);
-            FavButtons.areOn.insert(FavButtons.areOn.length, false);
-            FavButtons.favIcons.insert(FavButtons.favIcons.length, BasePage.selectedIcon,);
-            BasePage.icons.insert(BasePage.icons.length, BasePage._iconData);
+    title: Text('Configure favorite device',style: TextStyle(
+    color: Colors.white,
+    ),),
 
-          });
-          Navigator.of(context).pop();
-          toxtOditingCentraller.text = '';
-          }, child: Text('Ok', textAlign:TextAlign.right, style: TextStyle(
-            color: Colors.white, fontSize: 22,
-          ),),),
-        ],
-        elevation: 12,
-      ),
-      );
-      },
-      );
-    } else if (number == 2){
-      setState(() {
-      });
+
+
+    content: StatefulBuilder(
+    builder: (context, setState){
+    return Column(children: <Widget>[
+    Text('Please select the device',style: TextStyle(
+    color: Colors.white,
+    ),),
+    Padding(
+    padding: const EdgeInsets.fromLTRB(0,25,0,25),
+    child: DropdownButton<Device>(
+    value: _selectedDevice != null ? _selectedDevice : InventedData.listOfDevices.first,
+    items: InventedData.listOfDevices.map<DropdownMenuItem<Device>>((Device value) {
+    return DropdownMenuItem<Device>(
+    value: value,
+    child: Text(value.name),
+    );
+    }).toList(),
+
+    onChanged: (Device newDevice) {
+    setState((){
+    _selectedDevice = newDevice;
+    });
+    },
+    ),
+    ),
+    ],);
     }
-  }
-  
+    ),
 
+
+    actions: [
+    TextButton(onPressed: (){Navigator.of(context).pop();toxtOditingCentraller.text = '';}, child: Text('Cancel', textAlign:TextAlign.left, style: TextStyle(
+    color: Colors.white, fontSize: 22,
+    ),),),
+    TextButton(onPressed: (){setState(() {
+
+    InventedData.favoriteDevices.add(_selectedDevice);
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text("Se ha agregado el dispositivo a favoritos ${_selectedDevice.name}"),
+    ));
+    });
+
+    Navigator.of(context).pop();
+    toxtOditingCentraller.text = '';
+    },
+    child: Text('Ok',
+    textAlign:TextAlign.right,
+    style: TextStyle(
+    color: Colors.white,
+    fontSize: 22,
+    ),),),
+    ],
+    elevation: 12,
+    ),
+    );
+
+    },
+    );}
 
   void _pickZoneIcon() async {
-      IconData icon = await FlutterIconPicker.showIconPicker(context, iconPackMode: IconPack.material,);
-      if(icon != null){
-        setState((){
-          ZoneListTile.zoneIcons[_index] = Icon(icon,size: 30);
-        });
-    }
-      _index++;
-  }
-  void _pickFavIcon() async {
-    IconData icon = await FlutterIconPicker.showIconPicker(context, iconPackMode: IconPack.material,);
-    if(icon != null){
-      BasePage.selectedIcon = Icon(icon,size: 25,color: Colors.white);
-      BasePage.selected = true;
-      BasePage._iconData = icon;
-    }
-    _index++;
+    IconData icn = await FlutterIconPicker.showIconPicker(context, iconPackMode: IconPack.material,);
+    if(icn != null){
+      BasePage.baseIcon = Icon(icn, size: 25,);
+    }else {print('icon = null');}
   }
 
-  void _showToast (BuildContext context) {
-    final String er = BasePage.selected ? 'true' : 'false';
-    final scaffold = ScaffoldMessenger.of(context);
-    scaffold.showSnackBar(
-      SnackBar(
-        content: Text('prueba'),
-        action: SnackBarAction(label: 'Ocultar', onPressed: scaffold.hideCurrentSnackBar),
-      ),
-    );
-  }
+
+
 
   FocusNode focusnode;
   String hintext = '';
-  bool showSBar = false;
-  Icon barIcon = Icon(Icons.search);
-  Widget sBar = Text('');
-
-
 
   @override
   void initState() {
+    // this._device = widget.device;
     focusnode = FocusNode();
     focusnode.addListener(() {
       if(focusnode.hasFocus){
@@ -275,13 +234,16 @@ class _BasePageState extends State<BasePage> {
     super.initState();
   }
 
+  
+
   @override
   void dispose() {
     focusnode.dispose();
-    //textEditingController.dispose();
-    //toxtOditingCentraller.dispose();
     super.dispose();
   }
+
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -295,27 +257,28 @@ class _BasePageState extends State<BasePage> {
             Padding(
               padding: const EdgeInsets.only(top: 100, left: 20),
               child: Text('Dispositivos favoritos',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),),
             ),
             Container(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(15, 20, 0, 10),
+                padding: const EdgeInsets.fromLTRB(15, 10, 0, 10),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height/9,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
+                      AddFavoriteButton(function: addFavoriteFunction,),
                       Expanded(
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           physics: NeverScrollableScrollPhysics(),
                           children: [
-                             FavButtons(func: showDialogueFav, isOn: BasePage.isOn,),
+                            FavoriteButtons(),
                           ],
                         ),
                       ),
@@ -337,25 +300,35 @@ class _BasePageState extends State<BasePage> {
             ),
 
 
-              Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width/1.3,
-                child: ListView(
-                  shrinkWrap: true,
-                  physics: AlwaysScrollableScrollPhysics(),
-                  children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: ZoneListTile(function: showDialogue,),
-                      ),
-                  ],
-                ),
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width/1.3,
+              child: ListView(
+                shrinkWrap: true,
+                physics: AlwaysScrollableScrollPhysics(),
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Column(
+                      children: [
+                        ListView.builder (
+                            physics: ScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: InventedData.listOfZones.length,//ZoneListTile.zones.length,
+                            itemBuilder: (context, index){return
+                        ZoneButton(function: addZoneFunction, zone: InventedData.listOfZones[index],);}),
+                        AddZoneButton(function: addZoneFunction,),
+                      ],
+                    ),
+                  ),
+                ],
               ),
+            ),
           ],
         ),
       ),
     );
-    }
   }
+}
 
 

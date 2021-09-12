@@ -1,14 +1,23 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lit/Models/AppConstants.dart';
-import 'package:lit/Views/GridWidgets.dart';
+import 'package:lit/Models/Device.dart';
+import 'package:lit/Models/Zone.dart';
+import 'package:lit/Models/data.dart';
+import "package:collection/collection.dart";
+import 'package:lit/Views/DeviceButton.dart';
 
 class ZonePage extends StatefulWidget {
 
   static final String routeName = '/ZonePageRoute';
   static bool isOn = false;
+  final Zona zone;
+  int iter = 0;
 
-  ZonePage ({Key key}) : super (key: key);
+  ZonePage ( {this.zone,Key key}) : super (key: key);
 
   @override
   _ZonePageState createState() => _ZonePageState();
@@ -16,8 +25,39 @@ class ZonePage extends StatefulWidget {
 
 class _ZonePageState extends State<ZonePage> {
 
+  static Zona _zone;
+  static Map <bool , List<Device>> devicesInThisZone;
+  static List<Device> listOfDevicesInThisZone;
+
+  //int indexAssigned = InventedData.listOfDevices.indexWhere((dev) => dev.id == _device.id);
+
+
+
+
+@override
+  void initState() {
+    _zone = widget.zone;
+    super.initState();
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
+
+    final arguments = ModalRoute.of(context).settings.arguments as Map;
+    if(arguments != null) {
+      _zone = arguments['Zone'];
+      print(_zone.name);
+    }else
+      print('mierda');
+    devicesInThisZone = groupBy(InventedData.listOfDevices, (d) => d.belongsTo=='zone');
+    listOfDevicesInThisZone = devicesInThisZone.values.elementAt(0);
+    print('Devices in this zone : ${devicesInThisZone}');
+    print('The fucking list : ${listOfDevicesInThisZone}');
+
+
     return Scaffold(
       backgroundColor: AppConstants.appColor,
       body: Padding(
@@ -31,7 +71,7 @@ class _ZonePageState extends State<ZonePage> {
                     child: Container(
                       //color: Colors.greenAccent,
                       height: MediaQuery.of(context).size.height/4,
-                      child: Text('Living Room', style: TextStyle(
+                      child: Text(_zone.name, style: TextStyle(
                         fontSize: 35,
                         letterSpacing: 1,
                         color: Colors.white,
@@ -42,7 +82,7 @@ class _ZonePageState extends State<ZonePage> {
                     GridView.builder(
                       physics: ScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: 4,
+                      itemCount: listOfDevicesInThisZone != null ? listOfDevicesInThisZone.length : 0,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         crossAxisSpacing:10,
@@ -50,9 +90,10 @@ class _ZonePageState extends State<ZonePage> {
                         childAspectRatio: 3/4,
                       ),
                       itemBuilder: (context, index){
+                        print(devicesInThisZone);
                         return InkResponse(
                           enableFeedback: true,
-                          child: DevManagerGridTile(),
+                          child: DeviceButton(listOfDevicesInThisZone[index]),
                           onTap: ()=>{},
                         );
                       },
@@ -66,4 +107,9 @@ class _ZonePageState extends State<ZonePage> {
     );
   }
 
+}
+
+int indexu (int n) {
+  n--;
+  return n;
 }
