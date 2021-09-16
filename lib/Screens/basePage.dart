@@ -106,7 +106,7 @@ class _BasePageState extends State<BasePage> {
             //ZoneListTile.zones.insert(ZoneListTile.zones.length-1,_zone.name);
             //ZoneListTile.numItems.insert(ZoneListTile.zones.length-1, BasePage.ran.nextInt(6));
 
-            _zone.numDevices = 3;
+            _zone.numDevices = 0;
 
             InventedData.listOfZones.add(_zone);
             print('Zones length ${InventedData.listOfZones.length.toString()}');
@@ -126,7 +126,9 @@ class _BasePageState extends State<BasePage> {
   }
 
   void addFavoriteFunction() {
+
     Device _selectedDevice;
+
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text("Si buenas"),
@@ -157,13 +159,15 @@ class _BasePageState extends State<BasePage> {
     Padding(
     padding: const EdgeInsets.fromLTRB(0,25,0,25),
     child: DropdownButton<Device>(
-    value: _selectedDevice != null ? _selectedDevice : InventedData.listOfDevices.first,
-    items: InventedData.listOfDevices.map<DropdownMenuItem<Device>>((Device value) {
+      iconSize: 60,
+    elevation: 12,
+    value: _selectedDevice != null ? _selectedDevice : (InventedData.listOfDevices.length > 0 ? InventedData.listOfDevices.first : null),
+    items: InventedData.listOfDevices.length > 0 ? InventedData.listOfDevices.map<DropdownMenuItem<Device>>((Device value) {
     return DropdownMenuItem<Device>(
     value: value,
     child: Text(value.name),
     );
-    }).toList(),
+    }).toList() : null,
 
     onChanged: (Device newDevice) {
     setState((){
@@ -234,7 +238,7 @@ class _BasePageState extends State<BasePage> {
     super.initState();
   }
 
-  
+
 
   @override
   void dispose() {

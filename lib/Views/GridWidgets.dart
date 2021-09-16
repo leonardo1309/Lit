@@ -98,27 +98,14 @@ class _DevManagerGridTileState extends State<DevManagerGridTile> {
   @override
   Widget build(BuildContext context) {
 
-    Color getShadowColor(){
-      if(ZonePage.isOn == true){
-        return Colors.yellow;
-      }else{
-        return Colors.white;
-      }
-    }
-
     return Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          //FavoriteButton(),
           Text('hola'),
     ],
     );
   }
-}
-
-bool OnOff () {
-  ZonePage.isOn = !ZonePage.isOn;
 }
 
 

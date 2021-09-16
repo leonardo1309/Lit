@@ -1,5 +1,4 @@
 
-import 'dart:async';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:lit/Models/AppConstants.dart';
 import 'package:lit/Models/Device.dart';
 import 'package:lit/Models/Zone.dart';
 import 'package:lit/Models/data.dart';
-import 'package:lit/Views/ListWidgets.dart';
 
 TextEditingController textEditingController = TextEditingController();
 
@@ -110,6 +108,8 @@ class _AddPageState extends State<AddPage> {
 
   void addNewDevice() {
 
+    Zona _selectedZone;
+
     showDialog(context: this.context, builder: (BuildContext context){return AnimatedContainer(
       curve:Curves.easeOut, duration: Duration(milliseconds: 400),height:200, alignment: AddPage.childAlignment ,
 
@@ -158,7 +158,30 @@ class _AddPageState extends State<AddPage> {
                   icon: Icon(Icons.arrow_drop_down),
                   onPressed: ()=>{
                     _pickDeviceIcon(),
-                  },color: Colors.white,iconSize: 60,)
+                  },color: Colors.white,iconSize: 60,),
+                Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
+                child: Text('Asignar dispositivo a zona', style: TextStyle(
+                  color: Colors.white,
+                ),),
+                ),
+                DropdownButton<Zona>(
+                    iconSize: 60,
+                    elevation: 12,
+                    value: _selectedZone != null ? _selectedZone : (InventedData.listOfZones.length > 0 ? InventedData.listOfZones.first: null),
+                  items: InventedData.listOfZones.length > 0 ? InventedData.listOfZones.map<DropdownMenuItem<Zona>>((Zona value) {
+                    return DropdownMenuItem<Zona>(
+                      value: value,
+                      child: Text(value.name),
+                    );
+                  }).toList() : null,
+
+                  onChanged: (Zona newZona) {
+                    setState((){
+                      _selectedZone = newZona;
+                    });
+                  },
+                )
               ],);
             }
         ),
@@ -174,13 +197,15 @@ class _AddPageState extends State<AddPage> {
             _device.name = textEditingController.text;
             _device.id = idGenerator.nextInt(4).toString();
             _device.isOn = false;
+            _device.belongsTo = _selectedZone.name;
+            print(_selectedZone.name);
             _device.value = 50;
             _device.icon = _icon2;
             _device.iconData = _iconData2;
             _device.firstUse = true;
             InventedData.listOfDevices.add(_device);
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Se ha agregado el dispositivo ${_device.name}"),
+              content: Text("Se ha agregado el dispositivo ${_device.name}, y pertenece a ${_selectedZone.name}"),
             ));
 
 

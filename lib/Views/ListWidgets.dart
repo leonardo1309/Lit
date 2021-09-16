@@ -38,7 +38,7 @@ class _ZoneButtonState extends State<ZoneButton> {
           child: Padding(
             padding: const EdgeInsets.only(top:8.0,bottom: 8.0),
             child: AnimatedContainer(
-              duration: Duration(seconds: 2),
+              duration: Duration(milliseconds: 800),
               height: MediaQuery.of(context).size.width/5.7,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -71,11 +71,17 @@ class _ZoneButtonState extends State<ZoneButton> {
                 title: Text(_zone.name),
                 subtitle: Text('${_zone.numDevices.toString()} Items'),
                 onTap: () => {
-                Navigator.pushNamed(context, ZonePage.routeName, arguments: {'Zone': _zone}).then((_) => setState((){}),),
-                },
+                  print('esta zona ${_zone.name}'),
+                Navigator.pushNamed(context, ZonePage.routeName, arguments: {'Zone': _zone}).then((_) => InventedData.listOfDevices.forEach((element) {
+                  setState(() {
+                    print('set it motherfucker!');
+                    //element.icon = Icon(element.iconData,color: element.isOn ? AppConstants.appSecondaryColor : Colors.white);
+                });
+                }),
+                ),},
+                ),
               ),
-              ),
-        ),
+            ),
           ),
         );
 

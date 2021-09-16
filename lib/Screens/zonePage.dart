@@ -13,9 +13,8 @@ import 'package:lit/Views/DeviceButton.dart';
 class ZonePage extends StatefulWidget {
 
   static final String routeName = '/ZonePageRoute';
-  static bool isOn = false;
   final Zona zone;
-  int iter = 0;
+
 
   ZonePage ( {this.zone,Key key}) : super (key: key);
 
@@ -29,10 +28,6 @@ class _ZonePageState extends State<ZonePage> {
   static Map <bool , List<Device>> devicesInThisZone;
   static List<Device> listOfDevicesInThisZone;
 
-  //int indexAssigned = InventedData.listOfDevices.indexWhere((dev) => dev.id == _device.id);
-
-
-
 
 @override
   void initState() {
@@ -41,22 +36,17 @@ class _ZonePageState extends State<ZonePage> {
   }
 
 
-
-
   @override
   Widget build(BuildContext context) {
 
     final arguments = ModalRoute.of(context).settings.arguments as Map;
     if(arguments != null) {
       _zone = arguments['Zone'];
-      print(_zone.name);
-    }else
-      print('mierda');
-    devicesInThisZone = groupBy(InventedData.listOfDevices, (d) => d.belongsTo=='zone');
+    if(InventedData.listOfDevices.length > 0){
+    devicesInThisZone = groupBy(InventedData.listOfDevices, (d) => d.belongsTo == _zone.name);
     listOfDevicesInThisZone = devicesInThisZone.values.elementAt(0);
-    print('Devices in this zone : ${devicesInThisZone}');
-    print('The fucking list : ${listOfDevicesInThisZone}');
-
+    print(listOfDevicesInThisZone);
+  }else listOfDevicesInThisZone = null;}
 
     return Scaffold(
       backgroundColor: AppConstants.appColor,

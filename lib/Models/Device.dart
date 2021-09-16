@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-class Device {
+class Device extends ChangeNotifier {
 
   String name;
   String belongsTo = 'zone';
@@ -10,6 +10,19 @@ class Device {
   bool firstUse = true;
   Icon icon;
   IconData iconData;
+
+  bool get isTurnedOn => isOn;
+
+  void toggle(){
+    isOn = !isOn;
+    notifyListeners();
+  }
+
+  void changeValue (_value) {
+    value = _value;
+    if(value < 5) isOn = false;
+    notifyListeners();
+  }
 
   Device({this.name,this.id, this.value, this.isOn, this.icon, this.belongsTo});
 

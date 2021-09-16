@@ -6,6 +6,7 @@ import 'package:lit/Models/Device.dart';
 import 'package:lit/Models/data.dart';
 import 'package:lit/Screens/basePage.dart';
 import 'package:lit/Screens/devicePage.dart';
+import 'package:provider/provider.dart';
 
 import 'ListWidgets.dart';
 
@@ -21,7 +22,7 @@ class _DeviceButtonState extends State<DeviceButton>{
   @override
   Widget build(BuildContext context) {
 
-
+    //final isOn = Provider.of<Device>(context).isTurnedOn;
     Device _device;
     _device = widget.device; //InventedData.listOfDevices.indexWhere((dev) => dev.id == _device.id);
 
@@ -44,65 +45,85 @@ class _DeviceButtonState extends State<DeviceButton>{
 
     return Padding(
             padding: const EdgeInsets.fromLTRB(3,7,10,3),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AnimatedPhysicalModel(
-                  duration: Duration(milliseconds: 500),
-                  shape: BoxShape.circle,
-                  color: AppConstants.appColor,
-                  elevation: _device.isOn ? 8 : 0,
-                  shadowColor: AppConstants.appSecondaryColor,
-                  curve: Curves.easeInQuad,
-                  animateColor: false,
-                  clipBehavior: Clip.antiAlias,
-                  child: Container(
-                    alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width/8,
-                    decoration: BoxDecoration(
+            child: Consumer<Device>(
+              builder: (context, device, child) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AnimatedPhysicalModel(
+                      duration: Duration(milliseconds: 500),
                       shape: BoxShape.circle,
-                      color: getShadowColor(),
-                      border: Border.all(color: AppConstants.appSecondaryColor,width: 2),
-                    ),
+                      color: AppConstants.appColor,
+                      elevation: device.isOn ? 8 : 0,
+                      shadowColor: AppConstants.appSecondaryColor,
+                      curve: Curves.easeInQuad,
+                      animateColor: false,
+                      clipBehavior: Clip.antiAlias,
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width / 8,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: getShadowColor(),
+                          border: Border.all(
+                              color: AppConstants.appSecondaryColor, width: 2),
+                        ),
 
-                    child: Theme(
-                      data: ThemeData(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                      ),
-                      child: MaterialButton(
-                        padding: EdgeInsets.all(0),
-                        minWidth: 0,
-                        onPressed: () => {
-                            // DevicePage.indexx = index,
-                          setState(() {
-                        _device.isOn = !_device.isOn;
-                        _device.icon = Icon(_device.iconData,color: _device.isOn ? AppConstants.appSecondaryColor : Colors.white,);
-                        print('device: ${_device.name }, ${_device.isOn}');
-                          }),
+                        child: Theme(
+                          data: ThemeData(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                          ),
+                          child: MaterialButton(
+                            padding: EdgeInsets.all(0),
+                            minWidth: 0,
+                            onPressed: () =>
+                            {
+                              // DevicePage.indexx = index,
+                              setState(() {
+                                _device.isOn = !_device.isOn;
+                                _device.icon = Icon(_device.iconData,
+                                  color: _device.isOn ? AppConstants
+                                      .appSecondaryColor : Colors.white,);
+                                print('device: ${_device.name }, ${_device
+                                    .isOn}');
+                              }),
 
-                        },
-                        onLongPress: () => {
-                          DevicePage(_device),
-                          Navigator.pushNamed(context, DevicePage.routeName, arguments: {'device': _device}).then((_) => setState((){_device.icon = Icon(_device.iconData,color: _device.isOn ? AppConstants.appSecondaryColor : Colors.white,);
-                          print('set this shit');
-                          })),
-                        },
-                        child: _device.icon,
+                            },
+                            onLongPress: () =>
+                            {
+                              DevicePage(_device),
+                              Navigator.pushNamed(context, DevicePage.routeName,
+                                  arguments: {'device': _device}).then((_) =>
+                                  setState(() {
+                                    _device.icon = Icon(_device.iconData,
+                                      color: _device.isOn ? AppConstants
+                                          .appSecondaryColor : Colors.white,);
+                                    print('set this shit');
+                                  })),
+                            },
+                            child: _device.icon,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 3.0),
-                  child: Text(_device.name,
-                    style: TextStyle(
-                    fontSize: 10,
-                    color: _device.isOn ? AppConstants.appSecondaryColor : Colors.white,
-                    //fontWeight: FontWeight.bold,
-                  ),),
-                ),
-              ],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 3.0),
+                      child: Text(_device.name,
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: _device.isOn
+                              ? AppConstants.appSecondaryColor
+                              : Colors.white,
+                          //fontWeight: FontWeight.bold,
+                        ),),
+                    ),
+                  ],
+                );
+              },
             ),
           );
         }

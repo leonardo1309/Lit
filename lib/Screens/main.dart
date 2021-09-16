@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:js';
 
 import 'package:flutter/material.dart';
 import 'package:lit/Models/AppConstants.dart';
@@ -7,10 +8,15 @@ import 'package:lit/Screens/devicePage.dart';
 import 'package:lit/Screens/mainDashboard.dart';
 import 'package:lit/Screens/zonePage.dart';
 import 'package:lit/Models/Device.dart';
+import 'package:provider/provider.dart';
 import 'addPage.dart';
 import 'basePage.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(
+    ChangeNotifierProvider(create: (context) => Device(),
+    child: MyApp(),
+    ),
+);
 
 class MyApp extends StatelessWidget {
 
@@ -48,8 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    Timer(Duration(seconds: 2), (){
-      Navigator.pushNamed(context, MainDashboard.routeName);
+    Timer(Duration(seconds: 1), (){
+      Navigator.pushNamed(this.context, MainDashboard.routeName);
     });
     super.initState();
   }
